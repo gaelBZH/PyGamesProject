@@ -22,8 +22,8 @@ ENEMY_SPEED_MAX = 2
 ENEMY_SPAWN_RATE = 105
 MAX_ENEMIES = 6
 
-BULLET_WIDTH = 5
-BULLET_HEIGHT = 15
+BULLET_WIDTH = 15
+BULLET_HEIGHT = 45
 BULLET_SPEED = 2
 MAX_BULLETS = 5
 
@@ -52,6 +52,13 @@ try:
     player_image = pygame.transform.scale(raw_player_img, (PLAYER_WIDTH, PLAYER_HEIGHT))
 except pygame.error as e:
     print(f"Impossible de charger l'image du joueur Ship.png : {e}\nRectangle bleu par défaut.")
+
+torpilla_image = None
+try:
+    raw_torpilla_img = pygame.image.load('./Torpilla.png')
+    torpilla_image = pygame.transform.scale(raw_torpilla_img, (BULLET_WIDTH, BULLET_HEIGHT))
+except pygame.error as e:
+    print(f"Impossible de charger l'image de la torpille Torpilla.png : {e}\nRectangle vert par défaut.")
 
 # Load Audio
 try:
@@ -194,7 +201,10 @@ def game_loop():
         for enemy in enemy_list:
             pygame.draw.rect(screen, RED, enemy['rect'])
         for bullet in bullet_list:
-            pygame.draw.rect(screen, GREEN, bullet)
+            if torpilla_image:
+                screen.blit(torpilla_image, (bullet.x, bullet.y))
+            else:
+                pygame.draw.rect(screen, GREEN, bullet)
         display_score(score)
 
         pygame.display.flip()
