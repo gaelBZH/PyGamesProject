@@ -231,7 +231,8 @@ def game_loop():
             x=570+i*50
             y=10
             screen.blit(torpilla_image, (x,y))
-        
+        screen.blit(background_image_1, (0, 0)) if background_image else screen.fill(BLACK)
+
         draw_player(player_rect)
         for enemy in enemy_list:
             if enemy_image_right and enemy_image_left:
