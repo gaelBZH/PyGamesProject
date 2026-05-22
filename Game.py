@@ -27,8 +27,11 @@ BULLET_WIDTH = 8
 BULLET_HEIGHT = 40
 BULLET_SPEED = 1
 MAX_BULLETS = 5
-REGEN_TIME=2000
-NUMBER_MUNITION=5
+
+LEVEL_1 = 0
+LEVEL_2 = 50
+LEVEL_3 = 100
+
 pygame.init()
 pygame.mixer.init()
 
@@ -41,17 +44,17 @@ clock = pygame.time.Clock()
 
 # Load Images
 background_image_1 = None
-try:
-    raw_image = pygame.image.load('./Sea.jpg')
-    background_image_1 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-except pygame.error as e:
-    print(f"Impossible de charger l'image de fond Sea.jpg : {e}\nFond noir par défaut.")
 background_image_2 = None
+background_image_3 = None
 try:
+    raw_image = pygame.image.load('./Sea1.jpg')
+    background_image_1 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
     raw_image = pygame.image.load('./Sea2.png')
     background_image_2 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    raw_image = pygame.image.load('./Sea3.png')
+    background_image_3 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 except pygame.error as e:
-    print(f"Impossible de charger l'image de fond Sea2.jpg : {e}\nFond noir par défaut.")
+    print(f"Impossible de charger l'image de fond Sea : {e}\nFond noir par défaut.")
 
 player_image = None
 try:
@@ -107,12 +110,9 @@ def message(msg, color, y_displace=0, font=font_style):
 
 # Main Function
 def game_loop():
-    global NUMBER_MUNITION
-    last_regen=pygame.time.get_ticks()
-
-    
     game_over = False
     game_close = False
+    level = 1
 
     player_rect = pygame.Rect((SCREEN_WIDTH - PLAYER_WIDTH) / 2, 70, PLAYER_WIDTH, PLAYER_HEIGHT)
     player_x_change = 0
@@ -159,18 +159,16 @@ def game_loop():
             # Shoot
             if event.type == pygame.MOUSEBUTTONDOWN and len(bullet_list) < MAX_BULLETS:
                 bullet_y = player_rect.bottom
-                if NUMBER_MUNITION>=0:
-                    if event.button == 1:   # Left
-                        NUMBER_MUNITION-=1
-                        bullet_x = player_rect.left + 50
-                        bullet_list.append(pygame.Rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT))
-                        fire_sound.play()
-                        
-                    elif event.button == 3: # Right
-                        NUMBER_MUNITION-=1
-                        bullet_x = player_rect.right - 50
-                        bullet_list.append(pygame.Rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT))
-                        fire_sound.play()
+                
+                if event.button == 1:   # Left
+                    bullet_x = player_rect.left + 50
+                    bullet_list.append(pygame.Rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT))
+                    fire_sound.play()
+                    
+                elif event.button == 3: # Right
+                    bullet_x = player_rect.right - 50
+                    bullet_list.append(pygame.Rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT))
+                    fire_sound.play()
 
         # Update Position
         player_rect.x += player_x_change
@@ -212,25 +210,31 @@ def game_loop():
         for bullet in bullet_list[:]:
             for enemy_data in enemy_list[:]:
                 if bullet.colliderect(enemy_data['rect']):
-                    if bullet in bullet_list: bullet_list.remove(bullet)
-                    if enemy_data in enemy_list: enemy_list.remove(enemy_data)
+                    if bullet in bullet_list:
+                        bullet_list.remove(bullet)
+                    if enemy_data in enemy_list:
+                        enemy_list.remove(enemy_data)
                     score += 2
+                    if score >= LEVEL_3:
+                        level = 3
+                    elif score >= LEVEL_2:
+                        level = 2
+                    else:
+                        level = 1
                     break
-        
-        current_time=pygame.time.get_ticks()
-        if NUMBER_MUNITION<MAX_BULLETS:
-            if current_time-last_regen> REGEN_TIME:
-                NUMBER_MUNITION+=1
-                last_regen=current_time
+
         # Print
-        if score < 50:
+        if level == 1:
             screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
-        else:
+        elif level == 2:
             screen.blit(background_image_2, (0, 0)) if background_image_2 else screen.fill(BLACK)
-        for i in range(NUMBER_MUNITION):
-            x=570+i*50
-            y=10
-            screen.blit(torpilla_image, (x,y))
+        else:
+            screen.blit(background_image_3, (0, 0)) if background_image_3 else screen.fill(BLACK)
+
+        for i in range(MAX_BULLETS - len(bullet_list)):
+            x = SCREEN_WIDTH - 10 - (i + 1) * (BULLET_WIDTH + 15)
+            y = 10
+            screen.blit(torpilla_image, (x, y))
         
         draw_player(player_rect)
         for enemy in enemy_list:
