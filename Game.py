@@ -227,6 +227,10 @@ def game_loop():
             screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
         else:
             screen.blit(background_image_2, (0, 0)) if background_image_2 else screen.fill(BLACK)
+        for i in range(NUMBER_MUNITION):
+            x=570+i*50
+            y=10
+            screen.blit(torpilla_image, (x,y))
         
         draw_player(player_rect)
         for enemy in enemy_list:
