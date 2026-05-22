@@ -223,18 +223,6 @@ def game_loop():
                 NUMBER_MUNITION+=1
                 last_regen=current_time
         # Print
-        screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
-        for i in range(NUMBER_MUNITION):
-            x=570+i*50
-            y=10
-            screen.blit(torpilla_image, (x,y))
-        
-        current_time=pygame.time.get_ticks()
-        if NUMBER_MUNITION<MAX_BULLETS:
-            if current_time-last_regen> REGEN_TIME:
-                NUMBER_MUNITION+=1
-                last_regen=current_time
-        # Print
         if score < 50:
             screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
         else:
@@ -243,8 +231,7 @@ def game_loop():
             x=570+i*50
             y=10
             screen.blit(torpilla_image, (x,y))
-        screen.blit(background_image_2, (0, 0)) if background_image_2 else screen.fill(BLACK)
-
+        
         draw_player(player_rect)
         for enemy in enemy_list:
             if enemy_image_right and enemy_image_left:
