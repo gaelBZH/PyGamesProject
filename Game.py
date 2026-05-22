@@ -40,12 +40,18 @@ game_over_font = pygame.font.SysFont("monospace", 75)
 clock = pygame.time.Clock()
 
 # Load Images
-background_image = None
+background_image_1 = None
 try:
     raw_image = pygame.image.load('./Sea.jpg')
-    background_image = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    background_image_1 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 except pygame.error as e:
     print(f"Impossible de charger l'image de fond Sea.jpg : {e}\nFond noir par défaut.")
+background_image_2 = None
+try:
+    raw_image = pygame.image.load('./Sea2.png')
+    background_image_2 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+except pygame.error as e:
+    print(f"Impossible de charger l'image de fond Sea2.jpg : {e}\nFond noir par défaut.")
 
 player_image = None
 try:
@@ -206,7 +212,10 @@ def game_loop():
                     break
 
         # Print
-        screen.blit(background_image, (0, 0)) if background_image else screen.fill(BLACK)
+        if score < 50:
+            screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
+        else:
+            screen.blit(background_image_2, (0, 0)) if background_image_2 else screen.fill(BLACK)
         
         draw_player(player_rect)
         for enemy in enemy_list:
