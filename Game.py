@@ -27,8 +27,8 @@ BULLET_WIDTH = 8
 BULLET_HEIGHT = 40
 BULLET_SPEED = 1
 MAX_BULLETS = 5
-
-
+REGEN_TIME=2000
+NUMBER_MUNITION=5
 pygame.init()
 pygame.mixer.init()
 
@@ -107,6 +107,10 @@ def message(msg, color, y_displace=0, font=font_style):
 
 # Main Function
 def game_loop():
+    global NUMBER_MUNITION
+    last_regen=pygame.time.get_ticks()
+
+    
     game_over = False
     game_close = False
 
@@ -155,16 +159,18 @@ def game_loop():
             # Shoot
             if event.type == pygame.MOUSEBUTTONDOWN and len(bullet_list) < MAX_BULLETS:
                 bullet_y = player_rect.bottom
-                
-                if event.button == 1:   # Left
-                    bullet_x = player_rect.left + 50
-                    bullet_list.append(pygame.Rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT))
-                    fire_sound.play()
-                    
-                elif event.button == 3: # Right
-                    bullet_x = player_rect.right - 50
-                    bullet_list.append(pygame.Rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT))
-                    fire_sound.play()
+                if NUMBER_MUNITION>=0:
+                    if event.button == 1:   # Left
+                        NUMBER_MUNITION-=1
+                        bullet_x = player_rect.left + 50
+                        bullet_list.append(pygame.Rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT))
+                        fire_sound.play()
+                        
+                    elif event.button == 3: # Right
+                        NUMBER_MUNITION-=1
+                        bullet_x = player_rect.right - 50
+                        bullet_list.append(pygame.Rect(bullet_x, bullet_y, BULLET_WIDTH, BULLET_HEIGHT))
+                        fire_sound.play()
 
         # Update Position
         player_rect.x += player_x_change
@@ -210,7 +216,12 @@ def game_loop():
                     if enemy_data in enemy_list: enemy_list.remove(enemy_data)
                     score += 2
                     break
-
+        
+        current_time=pygame.time.get_ticks()
+        if NUMBER_MUNITION<MAX_BULLETS:
+            if current_time-last_regen> REGEN_TIME:
+                NUMBER_MUNITION+=1
+                last_regen=current_time
         # Print
         if score < 50:
             screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
