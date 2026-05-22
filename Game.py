@@ -13,7 +13,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 PLAYER_WIDTH = 250
-PLAYER_HEIGHT = 80
+PLAYER_HEIGHT = 70
 PLAYER_SPEED = 2
 ENEMY_WIDTH = 135
 ENEMY_HEIGHT = 44
@@ -58,7 +58,7 @@ except pygame.error as e:
 
 player_image = None
 try:
-    raw_player_img = pygame.image.load('./Ship.png')
+    raw_player_img = pygame.image.load('./Ship2.png')
     player_image = pygame.transform.scale(raw_player_img, (PLAYER_WIDTH, PLAYER_HEIGHT))
 except pygame.error as e:
     print(f"Impossible de charger l'image du joueur Ship.png : {e}\nRectangle bleu par défaut.")
@@ -82,7 +82,7 @@ except pygame.error as e:
 
 # Load Audio
 try:
-    pygame.mixer.music.load('./background_theme.mp3')
+    pygame.mixer.music.load('./music.mp3')
     fire_sound = pygame.mixer.Sound('./sonar.mp3')
     fire_sound.set_volume(0.5)
 except pygame.error as e:
