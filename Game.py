@@ -229,7 +229,7 @@ def game_loop():
         elif level == 2:
             screen.blit(background_image_2, (0, 0)) if background_image_2 else screen.fill(BLACK)
         else:
-            screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
+            screen.blit(background_image_3, (0, 0)) if background_image_3 else screen.fill(BLACK)
         
         draw_player(player_rect)
         for enemy in enemy_list:
