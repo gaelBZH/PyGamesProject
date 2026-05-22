@@ -14,7 +14,7 @@ BLUE = (0, 0, 255)
 
 PLAYER_WIDTH = 250
 PLAYER_HEIGHT = 80
-PLAYER_SPEED = 3
+PLAYER_SPEED = 2
 ENEMY_WIDTH = 135
 ENEMY_HEIGHT = 44
 
@@ -26,11 +26,11 @@ MAX_ENEMIES = 6
 BULLET_WIDTH = 8   
 BULLET_HEIGHT = 40
 BULLET_SPEED = 1
-MAX_BULLETS = 5
+MAX_BULLETS = 3
 
 LEVEL_1 = 0
-LEVEL_2 = 50
-LEVEL_3 = 100
+LEVEL_2 = 20
+LEVEL_3 = 50
 
 pygame.init()
 pygame.mixer.init()
@@ -101,6 +101,10 @@ def draw_player(player_rect):
 def display_score(score):
     score_text = font_style.render(f"Score: {score}", True, WHITE)
     screen.blit(score_text, [10, 10])
+
+def display_level(level):
+    level_text = font_style.render(f"Level: {level}", True, WHITE)
+    screen.blit(level_text, [10, 40])
 
 def message(msg, color, y_displace=0, font=font_style):
     mesg = font.render(msg, True, color)
@@ -226,10 +230,31 @@ def game_loop():
         # Print
         if level == 1:
             screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
+            MAX_BULLETS = 2
+            ENEMY_SPEED_MIN = 1
+            ENEMY_SPEED_MAX = 1
+            MAX_ENEMIES = 3
+            PLAYER_SPEED = 2
         elif level == 2:
             screen.blit(background_image_2, (0, 0)) if background_image_2 else screen.fill(BLACK)
+            MAX_BULLETS = 5
+            ENEMY_SPEED_MIN = 1
+            ENEMY_SPEED_MAX = 2
+            MAX_ENEMIES = 6
+            PLAYER_SPEED = 3
         else:
             screen.blit(background_image_3, (0, 0)) if background_image_3 else screen.fill(BLACK)
+            MAX_BULLETS = 8
+            ENEMY_SPEED_MIN = 2
+            ENEMY_SPEED_MAX = 3
+            MAX_ENEMIES = 8
+            PLAYER_SPEED = 4
+
+
+        for i in range(MAX_BULLETS - len(bullet_list)):
+            x = SCREEN_WIDTH - 10 - (i + 1) * (BULLET_WIDTH + 15)
+            y = 10
+            screen.blit(torpilla_image, (x, y))
         
         draw_player(player_rect)
         for enemy in enemy_list:
@@ -247,6 +272,7 @@ def game_loop():
             else:
                 pygame.draw.rect(screen, GREEN, bullet)
         display_score(score)
+        display_level(level)
 
         pygame.display.flip()
         clock.tick(80)
