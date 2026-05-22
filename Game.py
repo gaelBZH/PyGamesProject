@@ -28,6 +28,9 @@ BULLET_HEIGHT = 40
 BULLET_SPEED = 1
 MAX_BULLETS = 5
 
+LEVEL_1 = 0
+LEVEL_2 = 50
+LEVEL_3 = 100
 
 pygame.init()
 pygame.mixer.init()
@@ -41,17 +44,17 @@ clock = pygame.time.Clock()
 
 # Load Images
 background_image_1 = None
-try:
-    raw_image = pygame.image.load('./Sea.jpg')
-    background_image_1 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-except pygame.error as e:
-    print(f"Impossible de charger l'image de fond Sea.jpg : {e}\nFond noir par défaut.")
 background_image_2 = None
+background_image_3 = None
 try:
+    raw_image = pygame.image.load('./Sea1.jpg')
+    background_image_1 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
     raw_image = pygame.image.load('./Sea2.png')
     background_image_2 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    raw_image = pygame.image.load('./Sea3.png')
+    background_image_3 = pygame.transform.scale(raw_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 except pygame.error as e:
-    print(f"Impossible de charger l'image de fond Sea2.jpg : {e}\nFond noir par défaut.")
+    print(f"Impossible de charger l'image de fond Sea : {e}\nFond noir par défaut.")
 
 player_image = None
 try:
@@ -109,6 +112,7 @@ def message(msg, color, y_displace=0, font=font_style):
 def game_loop():
     game_over = False
     game_close = False
+    level = 1
 
     player_rect = pygame.Rect((SCREEN_WIDTH - PLAYER_WIDTH) / 2, 70, PLAYER_WIDTH, PLAYER_HEIGHT)
     player_x_change = 0
@@ -206,16 +210,26 @@ def game_loop():
         for bullet in bullet_list[:]:
             for enemy_data in enemy_list[:]:
                 if bullet.colliderect(enemy_data['rect']):
-                    if bullet in bullet_list: bullet_list.remove(bullet)
-                    if enemy_data in enemy_list: enemy_list.remove(enemy_data)
+                    if bullet in bullet_list:
+                        bullet_list.remove(bullet)
+                    if enemy_data in enemy_list:
+                        enemy_list.remove(enemy_data)
                     score += 2
+                    if score >= LEVEL_3:
+                        level = 3
+                    elif score >= LEVEL_2:
+                        level = 2
+                    else:
+                        level = 1
                     break
 
         # Print
-        if score < 50:
+        if level == 1:
             screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
-        else:
+        elif level == 2:
             screen.blit(background_image_2, (0, 0)) if background_image_2 else screen.fill(BLACK)
+        else:
+            screen.blit(background_image_1, (0, 0)) if background_image_1 else screen.fill(BLACK)
         
         draw_player(player_rect)
         for enemy in enemy_list:
