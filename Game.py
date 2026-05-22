@@ -3,6 +3,7 @@ import random
 import sys
 
 # Variables
+GAME_NAME = "PyGame Project"
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 WHITE = (255, 255, 255)
@@ -13,18 +14,18 @@ BLUE = (0, 0, 255)
 
 PLAYER_WIDTH = 250
 PLAYER_HEIGHT = 80
-PLAYER_SPEED = 7
-ENEMY_WIDTH = 40
-ENEMY_HEIGHT = 30
+PLAYER_SPEED = 3
+ENEMY_WIDTH = 135
+ENEMY_HEIGHT = 44
 
 ENEMY_SPEED_MIN = 1
 ENEMY_SPEED_MAX = 2
 ENEMY_SPAWN_RATE = 105
 MAX_ENEMIES = 6
 
-BULLET_WIDTH = 10   
-BULLET_HEIGHT = 50
-BULLET_SPEED = 2
+BULLET_WIDTH = 8   
+BULLET_HEIGHT = 40
+BULLET_SPEED = 1
 MAX_BULLETS = 5
 
 
@@ -32,7 +33,7 @@ pygame.init()
 pygame.mixer.init()
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Simple Arcade Shooter")
+pygame.display.set_caption(GAME_NAME)
 
 font_style = pygame.font.SysFont("monospace", 35)
 game_over_font = pygame.font.SysFont("monospace", 75)
@@ -59,6 +60,16 @@ try:
     torpilla_image = pygame.transform.scale(raw_torpilla_img, (BULLET_WIDTH, BULLET_HEIGHT))
 except pygame.error as e:
     print(f"Impossible de charger l'image de la torpille Torpilla.png : {e}\nRectangle vert par défaut.")
+
+enemy_image_right = None
+enemy_image_left = None
+try:
+    raw_enemy_img = pygame.image.load('./SubmarineA.png')
+    enemy_image_right = pygame.transform.scale(raw_enemy_img, (ENEMY_WIDTH, ENEMY_HEIGHT))
+    enemy_image_left = pygame.transform.flip(enemy_image_right, True, False)
+except pygame.error as e:
+    print(f"Impossible de charger l'image de l'ennemi SubmarineA.png : {e}\nRectangle rouge par défaut.")
+
 
 # Load Audio
 try:
@@ -191,7 +202,7 @@ def game_loop():
                 if bullet.colliderect(enemy_data['rect']):
                     if bullet in bullet_list: bullet_list.remove(bullet)
                     if enemy_data in enemy_list: enemy_list.remove(enemy_data)
-                    score += 1
+                    score += 2
                     break
 
         # Print
@@ -199,7 +210,14 @@ def game_loop():
         
         draw_player(player_rect)
         for enemy in enemy_list:
-            pygame.draw.rect(screen, RED, enemy['rect'])
+            if enemy_image_right and enemy_image_left:
+                if enemy['speed'] > 0:
+                    screen.blit(enemy_image_right, (enemy['rect'].x, enemy['rect'].y))
+                else:
+                    screen.blit(enemy_image_left, (enemy['rect'].x, enemy['rect'].y))
+            else:
+                pygame.draw.rect(screen, RED, enemy['rect'])
+                
         for bullet in bullet_list:
             if torpilla_image:
                 screen.blit(torpilla_image, (bullet.x, bullet.y))
@@ -208,7 +226,7 @@ def game_loop():
         display_score(score)
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(80)
 
     pygame.quit()
     sys.exit()
