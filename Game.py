@@ -268,7 +268,7 @@ def game_loop():
                         bullet_list.remove(bullet)
                     if enemy_data in enemy_list:
                         enemy_list.remove(enemy_data)
-                    score += 2
+                    score += abs(enemy_data['speed'])
                     if score >= LEVEL_3:
                         level = 3
                     elif score >= LEVEL_2:
