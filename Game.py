@@ -96,7 +96,7 @@ except pygame.error as e:
 try:
     pygame.mixer.music.load('./music.mp3')
     fire_sound = pygame.mixer.Sound('./sonar.mp3')
-    fire_sound.set_volume(0.5)
+    fire_sound.set_volume(1)
 except pygame.error as e:
     print(f"Audio error: {e}")
     fire_sound = None
